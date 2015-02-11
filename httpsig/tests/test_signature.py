@@ -17,7 +17,8 @@ class TestSign(unittest.TestCase):
 
     def setUp(self):
         self.key_path = os.path.join(os.path.dirname(__file__), 'rsa_private.pem')
-        self.key = open(self.key_path, 'rb').read()
+        with open(self.key_path, 'rb') as f:
+            self.key = f.read()
 
     def test_default(self):
         hs = sign.HeaderSigner(key_id='Test', secret=self.key)

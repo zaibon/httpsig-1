@@ -144,10 +144,12 @@ class TestVerifyHMACSHA512(TestVerifyHMACSHA1):
 class TestVerifyRSASHA1(TestVerifyHMACSHA1):
     def setUp(self):
         private_key_path = os.path.join(os.path.dirname(__file__), 'rsa_private.pem')
-        private_key = open(private_key_path, 'rb').read()
+        with open(private_key_path, 'rb') as f:
+            private_key = f.read()
         
         public_key_path = os.path.join(os.path.dirname(__file__), 'rsa_public.pem')
-        public_key = open(public_key_path, 'rb').read()
+        with open(public_key_path, 'rb') as f:
+            public_key = f.read()
         
         self.keyId = "Test"
         self.algorithm = "rsa-sha1"
