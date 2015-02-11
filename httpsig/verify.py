@@ -36,7 +36,7 @@ class Verifier(Signer):
         elif self.sign_algorithm == 'hmac':
             h = self._sign_hmac(data)
             s = b64decode(signature)
-            return (h == s)
+            return ct_bytes_compare(h, s)
         
         else:
             raise HttpSigException("Unsupported algorithm.")

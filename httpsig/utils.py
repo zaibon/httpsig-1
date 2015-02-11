@@ -23,6 +23,28 @@ HASHES = {'sha1':   SHA,
 class HttpSigException(Exception):
     pass
 
+"""
+Constant-time string compare.
+http://codahale.com/a-lesson-in-timing-attacks/
+"""
+def ct_bytes_compare(a, b):
+    if not isinstance(a, six.binary_type):
+        a = a.decode('utf8')
+    if not isinstance(b, six.binary_type):
+        b = b.decode('utf8')
+
+    if len(a) != len(b):
+        return False
+
+    result = 0
+    for x, y in zip(a, b):
+        if six.PY2:
+            result |= ord(x) ^ ord(y)
+        else:
+            result |= x ^ y
+            
+    return (result == 0)
+
 def generate_message(required_headers, headers, host=None, method=None, path=None):
     headers = CaseInsensitiveDict(headers)
     
