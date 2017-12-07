@@ -21,13 +21,13 @@ Requirements
 ------------
 
 * Python 2.7, 3.2, 3.3, 3.4
-* PyCrypto_
+* pycryptodome_
 
 Optional:
 
 * requests_
 
-.. _PyCrypto: https://pypi.python.org/pypi/pycrypto
+.. _pycryptodome: https://pypi.python.org/pypi/pycryptodome
 .. _requests: https://pypi.python.org/pypi/requests
 
 Usage

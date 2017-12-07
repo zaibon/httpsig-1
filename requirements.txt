@@ -1,2 +1,2 @@
-PyCrypto
+pycryptodome==3.4.7
 six
