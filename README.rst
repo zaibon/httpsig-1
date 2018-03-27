@@ -20,8 +20,8 @@ See the original project_, original Python module_, original spec_, and `current
 Requirements
 ------------
 
-* Python 2.7, 3.2, 3.3, 3.4
-* pycryptodome_
+* Python 2.7, 3.3, 3.4, 3.5, 3.6
+* PyCrypto_
 
 Optional:
 
@@ -29,6 +29,12 @@ Optional:
 
 .. _pycryptodome: https://pypi.python.org/pypi/pycryptodome
 .. _requests: https://pypi.python.org/pypi/requests
+
+For testing:
+
+* tox
+* pyenv (optional, handy way to access multiple versions)
+	$ for VERS in 2.7.14 3.3.7 3.4.8 3.5.5 3.6.4; do pyenv install -s $VERS; done
 
 Usage
 -----
