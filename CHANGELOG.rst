@@ -1,6 +1,14 @@
 httpsig Changes
 ---------------
 
+1.2.0 (2018-Mar-28)
+-------------------
+
+* Switched to pycryptodome instead of PyCrypto
+* Updated tests with the test data from Draft 8 and verified it still passes.
+* Dropped official Python 3.2 support (pip dropped it so it can't be properly tested)
+* Cleaned up the code to be more PEP8-like.
+
 1.1.2 (2015-Feb-11)
 -------------------
 

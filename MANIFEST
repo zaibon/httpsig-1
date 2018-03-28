@@ -5,9 +5,7 @@ README.rst
 requirements.txt
 setup.cfg
 setup.py
-versioneer.py
 httpsig/__init__.py
-httpsig/_version.py
 httpsig/requests_auth.py
 httpsig/sign.py
 httpsig/utils.py
