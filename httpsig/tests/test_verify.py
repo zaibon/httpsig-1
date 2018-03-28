@@ -52,7 +52,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
         BAD = b"this is not the signature you were looking for..."
 
         # generate signed string
-        signature = signer._sign(GOOD)
+        signature = signer.sign(GOOD)
         self.assertTrue(verifier._verify(data=GOOD, signature=signature))
         self.assertFalse(verifier._verify(data=BAD, signature=signature))
 
