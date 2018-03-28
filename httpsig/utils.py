@@ -151,6 +151,11 @@ def is_rsa(keyobj):
 
 # based on http://stackoverflow.com/a/2082169/151401
 class CaseInsensitiveDict(dict):
+    """ A case-insensitive dictionary for header storage.
+        A limitation of this approach is the inability to store
+        multiple instances of the same header. If that is changed
+        then we suddenly care about the assembly rules in sec 2.3.
+    """
     def __init__(self, d=None, **kwargs):
         super(CaseInsensitiveDict, self).__init__(**kwargs)
         if d:

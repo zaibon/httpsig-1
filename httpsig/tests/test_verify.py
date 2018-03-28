@@ -25,6 +25,14 @@ class BaseTestCase(unittest.TestCase):
 
         
 class TestVerifyHMACSHA1(BaseTestCase):
+    test_method = 'POST'
+    test_path = '/foo?param=value&pet=dog'
+    header_host = 'example.com'
+    header_date = 'Thu, 05 Jan 2014 21:31:40 GMT'
+    header_content_type = 'application/json'
+    header_digest = 'SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE='
+    header_content_length = '18'
+
     def setUp(self):
         secret = b"something special goes here"
         
@@ -47,7 +55,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
 
     def test_default(self):
         unsigned = {
-            'Date': 'Thu, 05 Jan 2012 21:31:40 GMT'
+            'Date': self.header_date
         }
         
         hs = HeaderSigner(key_id="Test", secret=self.sign_secret, algorithm=self.algorithm)
@@ -56,23 +64,23 @@ class TestVerifyHMACSHA1(BaseTestCase):
         self.assertTrue(hv.verify())
 
     def test_signed_headers(self):
-        HOST = "example.com"
-        METHOD = "POST"
-        PATH = '/foo?param=value&pet=dog'
+        HOST = self.header_host
+        METHOD = self.test_method
+        PATH = self.test_path
         hs = HeaderSigner(key_id="Test", secret=self.sign_secret, algorithm=self.algorithm, headers=[
             '(request-target)',
             'host',
             'date',
             'content-type',
-            'content-md5',
+            'digest',
             'content-length'
         ])
         unsigned = {
             'Host': HOST,
-            'Date': 'Thu, 05 Jan 2012 21:31:40 GMT',
-            'Content-Type': 'application/json',
-            'Content-MD5': 'Sd/dVLAcvNLSq16eXua5uQ==',
-            'Content-Length': '18',
+            'Date': self.header_date,
+            'Content-Type': self.header_content_type,
+            'Digest': self.header_digest,
+            'Content-Length': self.header_content_length,
         }
         signed = hs.sign(unsigned, method=METHOD, path=PATH)
         
@@ -80,9 +88,9 @@ class TestVerifyHMACSHA1(BaseTestCase):
         self.assertTrue(hv.verify())
 
     def test_incorrect_headers(self):
-        HOST = "example.com"
-        METHOD = "POST"
-        PATH = '/foo?param=value&pet=dog'
+        HOST = self.header_host
+        METHOD = self.test_method
+        PATH = self.test_path
         hs = HeaderSigner(secret=self.sign_secret,
                           key_id="Test",
                           algorithm=self.algorithm,
@@ -91,14 +99,14 @@ class TestVerifyHMACSHA1(BaseTestCase):
                             'host',
                             'date',
                             'content-type',
-                            'content-md5',
+                            'digest',
                             'content-length'])
         unsigned = {
             'Host': HOST,
-            'Date': 'Thu, 05 Jan 2012 21:31:40 GMT',
-            'Content-Type': 'application/json',
-            'Content-MD5': 'Sd/dVLAcvNLSq16eXua5uQ==',
-            'Content-Length': '18',
+            'Date': self.header_date,
+            'Content-Type': self.header_content_type,
+            'Digest': self.header_digest,
+            'Content-Length': self.header_content_length,
         }
         signed = hs.sign(unsigned, method=METHOD, path=PATH)
 
@@ -115,15 +123,15 @@ class TestVerifyHMACSHA1(BaseTestCase):
             'host',
             'date',
             'content-type',
-            'content-md5',
+            'digest',
             'content-length'
         ])
         unsigned = {
             'Host': HOST,
-            'Date': 'Thu, 05 Jan 2012 21:31:40 GMT',
-            'Content-Type': 'application/json',
-            'Content-MD5': 'Sd/dVLAcvNLSq16eXua5uQ==',
-            'Content-Length': '18',
+            'Date': self.header_date,
+            'Content-Type': self.header_content_type,
+            'Digest': self.header_digest,
+            'Content-Length': self.header_content_length,
         }
         signed = hs.sign(unsigned, method=METHOD, path=PATH)
         hv = HeaderVerifier(headers=signed, secret=self.verify_secret, method=METHOD, path=PATH, required_headers=['date', '(request-target)'])

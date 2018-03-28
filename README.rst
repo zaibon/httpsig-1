@@ -7,7 +7,7 @@ httpsig
 .. image:: https://travis-ci.org/ahknight/httpsig.svg?branch=develop
     :target: https://travis-ci.org/ahknight/httpsig
 
-Sign HTTP requests with secure signatures according to the IETF HTTP Signatures specification (`Draft 3`_).  This is a fork of the original module_ to fully support both RSA and HMAC schemes as well as unit test both schemes to prove they work.  It's being used in production and is actively-developed.
+Sign HTTP requests with secure signatures according to the IETF HTTP Signatures specification (`Draft 8`_).  This is a fork of the original module_ to fully support both RSA and HMAC schemes as well as unit test both schemes to prove they work.  It's being used in production and is actively-developed.
 
 See the original project_, original Python module_, original spec_, and `current IETF draft`_ for more details on the signing scheme.
 
@@ -15,19 +15,19 @@ See the original project_, original Python module_, original spec_, and `current
 .. _module: https://github.com/zzsnzmn/py-http-signature
 .. _spec: https://github.com/joyent/node-http-signature/blob/master/http_signing.md
 .. _`current IETF draft`: https://datatracker.ietf.org/doc/draft-cavage-http-signatures/
-.. _`Draft 3`: http://tools.ietf.org/html/draft-cavage-http-signatures-03
+.. _`Draft 8`: http://tools.ietf.org/html/draft-cavage-http-signatures-08
 
 Requirements
 ------------
 
-* Python 2.7, 3.3, 3.4, 3.5, 3.6
-* PyCrypto_
+* Python 2.7, 3.3-3.6
+* PyCryptodome_
 
 Optional:
 
 * requests_
 
-.. _pycryptodome: https://pypi.python.org/pypi/pycryptodome
+.. _PyCryptodome: https://pypi.python.org/pypi/pycryptodome
 .. _requests: https://pypi.python.org/pypi/requests
 
 For testing:
@@ -110,6 +110,15 @@ To run tests::
 or::
 
     tox
+
+Known Limitations
+-----------------
+
+1. Multiple values for the same header are not supported. New headers with the same name will overwrite the previous header. It might be possible to replace the CaseInsensitiveDict with the collection that the email package uses for headers to overcome this limitation.
+2. Keyfiles with passwords are not supported. There has been zero vocal demand for this so if you would like it, a PR would be a good way to get it in.
+3. Draft 2 added support for the Signature header. As this was principally designed to be an authentication helper, that header is not currently supported. PRs welcome. (It is trivial to move the value after generation, of course.)
+4. Draft 2 added support for ecdsa-sha256. This is available in PyCryptodome but has not been added to httpsig. PRs welcome.
+
 
 License
 -------
