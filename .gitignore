@@ -11,3 +11,5 @@ doc/__build/*
 *_rsa.pub
 locale/
 pip-log.txt
+/.idea
+/.eggs

@@ -132,7 +132,7 @@ def versions_from_vcs(tag_prefix, root, verbose=False):
         return {}
     if not stdout.startswith(tag_prefix):
         if verbose:
-            print("tag '%s' doesn't start with prefix '%s'" % (stdout, tag_prefix))
+            print("tag '%s' doesn't start with prefix '%s'" % (stdout, tag_prefix))  # noqa: E501
         return {}
     tag = stdout[len(tag_prefix):]
     stdout = run_command(GITS, ["rev-parse", "HEAD"], cwd=root)
@@ -150,7 +150,7 @@ def versions_from_parentdir(parentdir_prefix, root, verbose=False):
     dirname = os.path.basename(root)
     if not dirname.startswith(parentdir_prefix):
         if verbose:
-            print("guessing rootdir is '%s', but '%s' doesn't start with prefix '%s'" %
+            print("guessing rootdir is '%s', but '%s' doesn't start with prefix '%s'" %   # noqa: E501
                   (root, dirname, parentdir_prefix))
         return None
     return {"version": dirname[len(parentdir_prefix):], "full": ""}

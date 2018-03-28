@@ -1,8 +1,8 @@
+import base64
+import six
 import re
 import struct
 import hashlib
-import base64
-import six
 
 try:
     # Python 3
@@ -11,7 +11,6 @@ except ImportError:
     # Python 2
     from urllib2 import parse_http_list
 
-from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA, SHA256, SHA512
 
 ALGORITHMS = frozenset([
@@ -65,7 +64,8 @@ def generate_message(required_headers, headers, host=None, method=None,
         h = h.lower()
         if h == '(request-target)':
             if not method or not path:
-                raise Exception('method and path arguments required when using "(request-target)"')
+                raise Exception('method and path arguments required when ' +
+                                'using "(request-target)"')
             signable_list.append('%s: %s %s' % (h, method.lower(), path))
 
         elif h == 'host':
@@ -76,11 +76,11 @@ def generate_message(required_headers, headers, host=None, method=None,
                 if 'host' in headers:
                     host = headers[h]
                 else:
-                    raise Exception('missing required header "%s"' % (h))
+                    raise Exception('missing required header "%s"' % h)
             signable_list.append('%s: %s' % (h, host))
         else:
             if h not in headers:
-                raise Exception('missing required header "%s"' % (h))
+                raise Exception('missing required header "%s"' % h)
 
             signable_list.append('%s: %s' % (h, headers[h]))
 
@@ -94,7 +94,8 @@ def parse_authorization_header(header):
 
     auth = header.split(" ", 1)
     if len(auth) > 2:
-        raise ValueError('Invalid authorization header. (eg. Method key1=value1,key2="value, \"2\"")')
+        raise ValueError('Invalid authorization header. (eg. Method ' +
+                         'key1=value1,key2="value, \"2\"")')
 
     # Split up any args into a dictionary.
     values = {}
@@ -148,10 +149,10 @@ def build_signature_template(key_id, algorithm, headers):
 def lkv(d):
     parts = []
     while d:
-            len = struct.unpack('>I', d[:4])[0]
-            bits = d[4:len+4]
+            length = struct.unpack('>I', d[:4])[0]
+            bits = d[4:length+4]
             parts.append(bits)
-            d = d[len+4:]
+            d = d[length+4:]
     return parts
 
 

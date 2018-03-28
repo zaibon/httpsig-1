@@ -10,7 +10,7 @@ from .sign import HeaderSigner
 
 
 class HTTPSignatureAuth(requests.auth.AuthBase):
-    '''
+    """
     Sign a request using the http-signature scheme.
     https://github.com/joyent/node-http-signature/blob/master/http_signing.md
 
@@ -20,7 +20,7 @@ class HTTPSignatureAuth(requests.auth.AuthBase):
     `algorithm` is one of the six specified algorithms
       headers is a list of http headers to be included in the signing string,
       defaulting to "Date" alone.
-    '''
+    """
     def __init__(self, key_id='', secret='', algorithm=None, headers=None):
         headers = headers or []
         self.header_signer = HeaderSigner(

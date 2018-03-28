@@ -74,7 +74,7 @@ class Signer(object):
 
 
 class HeaderSigner(Signer):
-    '''
+    """
     Generic object that will sign headers as a dictionary using the
         http-signature scheme.
     https://github.com/joyent/node-http-signature/blob/master/http_signing.md
@@ -86,7 +86,7 @@ class HeaderSigner(Signer):
     :arg algorithm: one of the six specified algorithms
     :arg headers:   a list of http headers to be included in the signing
         string, defaulting to ['date'].
-    '''
+    """
     def __init__(self, key_id, secret, algorithm=None, headers=None):
         if algorithm is None:
             algorithm = DEFAULT_SIGN_ALGORITHM

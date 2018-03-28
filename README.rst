@@ -34,7 +34,7 @@ For testing:
 
 * tox
 * pyenv (optional, handy way to access multiple versions)
-	$ for VERS in 2.7.14 3.3.7 3.4.8 3.5.5 3.6.4; do pyenv install -s $VERS; done
+    $ for VERS in 2.7.14 3.3.7 3.4.8 3.5.5 3.6.4; do pyenv install -s $VERS; done
 
 Usage
 -----
