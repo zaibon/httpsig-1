@@ -47,7 +47,7 @@ class HeaderVerifier(Verifier):
     """
 
     def __init__(self, headers, secret, required_headers=None, method=None,
-                 path=None, host=None):
+                 path=None, host=None, sign_header='authorization'):
         """
         Instantiate a HeaderVerifier object.
 
@@ -64,16 +64,21 @@ class HeaderVerifier(Verifier):
             Required for the '(request-target)' header.
         :param host:                Optional. The value to use for the Host
             header, if not supplied in :param:headers.
+        :param sign_header:         Optional. The header where the signature is.
+            Default is 'authorization'.
         """
         required_headers = required_headers or ['date']
-
-        auth = parse_authorization_header(headers['authorization'])
-        if len(auth) == 2:
-            self.auth_dict = auth[1]
-        else:
-            raise HttpSigException("Invalid authorization header.")
-
         self.headers = CaseInsensitiveDict(headers)
+
+        if sign_header.lower() == 'authorization':
+            auth = parse_authorization_header(self.headers['authorization'])
+            if len(auth) == 2:
+                self.auth_dict = auth[1]
+            else:
+                raise HttpSigException("Invalid authorization header.")
+        else:
+            self.auth_dict = parse_signature_header(self.headers[sign_header])
+
         self.required_headers = [s.lower() for s in required_headers]
         self.method = method
         self.path = path

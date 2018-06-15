@@ -86,15 +86,18 @@ class HeaderSigner(Signer):
     :arg algorithm: one of the six specified algorithms
     :arg headers:   a list of http headers to be included in the signing
         string, defaulting to ['date'].
+    :arg sign_header: header used to include signature, defaulting to
+       'authorization'.
     """
-    def __init__(self, key_id, secret, algorithm=None, headers=None):
+    def __init__(self, key_id, secret, algorithm=None, headers=None, sign_header='authorization'):
         if algorithm is None:
             algorithm = DEFAULT_SIGN_ALGORITHM
 
         super(HeaderSigner, self).__init__(secret=secret, algorithm=algorithm)
         self.headers = headers or ['date']
         self.signature_template = build_signature_template(
-                                    key_id, algorithm, headers)
+                                    key_id, algorithm, headers, sign_header)
+        self.sign_header = sign_header
 
     def sign(self, headers, host=None, method=None, path=None):
         """
@@ -112,6 +115,6 @@ class HeaderSigner(Signer):
                     required_headers, headers, host, method, path)
 
         signature = self._sign(signable)
-        headers['authorization'] = self.signature_template % signature
+        headers[self.sign_header] = self.signature_template % signature
 
         return headers
