@@ -88,6 +88,28 @@ def generate_message(required_headers, headers, host=None, method=None,
     return signable
 
 
+def parse_signature_header(sign_value):
+    values = {}
+    if sign_value:
+        # This is tricky string magic.  Let urllib do it.
+        fields = parse_http_list(sign_value)
+
+        for item in fields:
+            # Only include keypairs.
+            if '=' in item:
+                # Split on the first '=' only.
+                key, value = item.split('=', 1)
+                if not (len(key) and len(value)):
+                    continue
+
+                # Unquote values, if quoted.
+                if value[0] == '"':
+                    value = value[1:-1]
+
+                values[key] = value
+    return CaseInsensitiveDict(values)
+
+
 def parse_authorization_header(header):
     if not isinstance(header, six.string_types):
         header = header.decode("ascii")  # HTTP headers cannot be Unicode.
@@ -100,30 +122,13 @@ def parse_authorization_header(header):
     # Split up any args into a dictionary.
     values = {}
     if len(auth) == 2:
-        auth_value = auth[1]
-        if auth_value and len(auth_value):
-            # This is tricky string magic.  Let urllib do it.
-            fields = parse_http_list(auth_value)
-
-            for item in fields:
-                # Only include keypairs.
-                if '=' in item:
-                    # Split on the first '=' only.
-                    key, value = item.split('=', 1)
-                    if not (len(key) and len(value)):
-                        continue
-
-                    # Unquote values, if quoted.
-                    if value[0] == '"':
-                        value = value[1:-1]
-
-                    values[key] = value
+        values = parse_signature_header(auth[1])
 
     # ("Signature", {"headers": "date", "algorithm": "hmac-sha256", ... })
-    return (auth[0], CaseInsensitiveDict(values))
+    return (auth[0], values)
 
 
-def build_signature_template(key_id, algorithm, headers):
+def build_signature_template(key_id, algorithm, headers, sign_header='authorization'):
     """
     Build the Signature template for use with the Authorization header.
 
@@ -142,8 +147,10 @@ def build_signature_template(key_id, algorithm, headers):
         param_map['headers'] = ' '.join(headers)
     kv = map('{0[0]}="{0[1]}"'.format, param_map.items())
     kv_string = ','.join(kv)
-    sig_string = 'Signature {0}'.format(kv_string)
-    return sig_string
+    if sign_header.lower() == 'authorization':
+        return 'Signature {0}'.format(kv_string)
+
+    return kv_string
 
 
 def lkv(d):
