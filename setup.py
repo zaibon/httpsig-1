@@ -37,6 +37,6 @@ setup(
     zip_safe=True,
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
-    install_requires=['pycryptodome==3.4.7', 'six'],
+    install_requires=['pycryptodome>=3,<4', 'six'],
     test_suite="httpsig.tests",
 )
