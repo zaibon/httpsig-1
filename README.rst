@@ -20,7 +20,7 @@ See the original project_, original Python module_, original spec_, and `current
 Requirements
 ------------
 
-* Python 2.7, 3.3-3.6
+* Python 2.7, 3.4-3.7
 * PyCryptodome_
 
 Optional:
@@ -34,7 +34,7 @@ For testing:
 
 * tox
 * pyenv (optional, handy way to access multiple versions)
-    $ for VERS in 2.7.14 3.3.7 3.4.8 3.5.5 3.6.4; do pyenv install -s $VERS; done
+    $ for VERS in 2.7.15 3.4.9 3.5.6 3.6.7 3.7.1; do pyenv install -s $VERS; done
 
 Usage
 -----
@@ -116,8 +116,7 @@ Known Limitations
 
 1. Multiple values for the same header are not supported. New headers with the same name will overwrite the previous header. It might be possible to replace the CaseInsensitiveDict with the collection that the email package uses for headers to overcome this limitation.
 2. Keyfiles with passwords are not supported. There has been zero vocal demand for this so if you would like it, a PR would be a good way to get it in.
-3. Draft 2 added support for the Signature header. As this was principally designed to be an authentication helper, that header is not currently supported. PRs welcome. (It is trivial to move the value after generation, of course.)
-4. Draft 2 added support for ecdsa-sha256. This is available in PyCryptodome but has not been added to httpsig. PRs welcome.
+3. Draft 2 added support for ecdsa-sha256. This is available in PyCryptodome but has not been added to httpsig. PRs welcome.
 
 
 License

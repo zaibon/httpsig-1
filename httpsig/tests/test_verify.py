@@ -34,6 +34,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
     header_content_type = 'application/json'
     header_digest = 'SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE='
     header_content_length = '18'
+    sign_header = 'authorization'
 
     def setUp(self):
         secret = b"something special goes here"
@@ -62,9 +63,11 @@ class TestVerifyHMACSHA1(BaseTestCase):
         }
 
         hs = HeaderSigner(
-            key_id="Test", secret=self.sign_secret, algorithm=self.algorithm)
+            key_id="Test", secret=self.sign_secret, algorithm=self.algorithm,
+            sign_header=self.sign_header)
         signed = hs.sign(unsigned)
-        hv = HeaderVerifier(headers=signed, secret=self.verify_secret)
+        hv = HeaderVerifier(
+            headers=signed, secret=self.verify_secret, sign_header=self.sign_header)
         self.assertTrue(hv.verify())
 
     def test_signed_headers(self):
@@ -75,6 +78,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
                 key_id="Test",
                 secret=self.sign_secret,
                 algorithm=self.algorithm,
+                sign_header=self.sign_header,
                 headers=[
                     '(request-target)',
                     'host',
@@ -94,7 +98,8 @@ class TestVerifyHMACSHA1(BaseTestCase):
 
         hv = HeaderVerifier(
                 headers=signed, secret=self.verify_secret,
-                host=HOST, method=METHOD, path=PATH)
+                host=HOST, method=METHOD, path=PATH,
+                sign_header=self.sign_header)
         self.assertTrue(hv.verify())
 
     def test_incorrect_headers(self):
@@ -104,6 +109,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
         hs = HeaderSigner(secret=self.sign_secret,
                           key_id="Test",
                           algorithm=self.algorithm,
+                          sign_header=self.sign_header,
                           headers=[
                               '(request-target)',
                               'host',
@@ -122,7 +128,8 @@ class TestVerifyHMACSHA1(BaseTestCase):
 
         hv = HeaderVerifier(headers=signed, secret=self.verify_secret,
                             required_headers=["some-other-header"],
-                            host=HOST, method=METHOD, path=PATH)
+                            host=HOST, method=METHOD, path=PATH,
+                            sign_header=self.sign_header)
         with self.assertRaises(Exception):
             hv.verify()
 
@@ -133,6 +140,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
         hs = HeaderSigner(
                 key_id="Test",
                 secret=self.sign_secret,
+                sign_header=self.sign_header,
                 algorithm=self.algorithm, headers=[
                     '(request-target)',
                     'host',
@@ -154,6 +162,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
                 secret=self.verify_secret,
                 method=METHOD,
                 path=PATH,
+                sign_header=self.sign_header,
                 required_headers=['date', '(request-target)'])
         self.assertTrue(hv.verify())
 
@@ -205,3 +214,7 @@ class TestVerifyRSASHA512(TestVerifyRSASHA1):
     def setUp(self):
         super(TestVerifyRSASHA512, self).setUp()
         self.algorithm = "rsa-sha512"
+
+
+class TestVerifyRSASHA512ChangeHeader(TestVerifyRSASHA1):
+    sign_header = 'Signature'
