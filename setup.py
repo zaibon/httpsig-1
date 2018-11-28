@@ -9,7 +9,6 @@ with open('CHANGELOG.rst') as file:
 
 setup(
     name='httpsig',
-    # version=versioneer.get_version(),
     description="Secure HTTP request signing using the HTTP Signature draft specification",
     long_description=long_description,
     classifiers=[

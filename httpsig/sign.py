@@ -60,7 +60,7 @@ class Signer(object):
         hmac.update(data)
         return hmac.digest()
 
-    def _sign(self, data):
+    def sign(self, data):
         if isinstance(data, six.string_types):
             data = data.encode("ascii")
         signed = None
@@ -114,7 +114,7 @@ class HeaderSigner(Signer):
         signable = generate_message(
                     required_headers, headers, host, method, path)
 
-        signature = self._sign(signable)
+        signature = super(HeaderSigner, self).sign(signable)
         headers[self.sign_header] = self.signature_template % signature
 
         return headers
