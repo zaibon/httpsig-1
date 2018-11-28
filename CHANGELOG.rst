@@ -1,10 +1,18 @@
 httpsig Changes
 ---------------
 
+1.3.0 (2019-Nov-28)
+-------------------
+
+* Relax pycryptodome requirements (PR#14 by cveilleux)
+* Ability to supply another signature header like Signature (PR#15 by rbignon)
+* Fixed #2; made Signer.sign() public
+* Dropped Python 3.3, added Python 3.7.
+
 1.2.0 (2018-Mar-28)
 -------------------
 
-* Switched to pycryptodome instead of PyCrypto
+* Switched to pycryptodome instead of PyCrypto (PR#11 by iandouglas)
 * Updated tests with the test data from Draft 8 and verified it still passes.
 * Dropped official Python 3.2 support (pip dropped it so it can't be properly tested)
 * Cleaned up the code to be more PEP8-like.
