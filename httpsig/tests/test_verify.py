@@ -218,3 +218,24 @@ class TestVerifyRSASHA512(TestVerifyRSASHA1):
 
 class TestVerifyRSASHA512ChangeHeader(TestVerifyRSASHA1):
     sign_header = 'Signature'
+
+
+class TestVerifyEd25519(TestVerifyRSASHA1):
+
+    def setUp(self):
+        private_key_path = os.path.join(
+                            os.path.dirname(__file__),
+                            'ed25519_private.txt')
+        with open(private_key_path, 'r') as f:
+            private_key = f.read()
+
+        public_key_path = os.path.join(
+                            os.path.dirname(__file__),
+                            'ed25519_public.txt')
+        with open(public_key_path, 'r') as f:
+            public_key = f.read()
+
+        self.keyId = "Test"
+        self.algorithm = "ed25519"
+        self.sign_secret = private_key
+        self.verify_secret = public_key

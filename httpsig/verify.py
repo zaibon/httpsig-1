@@ -6,7 +6,9 @@ import six
 
 from .sign import Signer
 from .utils import *
-
+from nacl.signing import VerifyKey
+from nacl.encoding import Base64Encoder
+from nacl.exceptions import BadSignatureError 
 
 class Verifier(Signer):
     """
@@ -14,6 +16,13 @@ class Verifier(Signer):
     For HMAC, the secret is the shared secret.
     For RSA, the secret is the PUBLIC key.
     """
+
+    def __init__(self,secret, algorithm=None):
+        super(Verifier, self).__init__(secret=secret, algorithm=algorithm)
+        # special case for ed25519 algo that needs to to use another type
+        # for the key then the Signer class
+        if self._ed25519:
+            self._ed25519 = VerifyKey(secret, encoder=Base64Encoder)
 
     def _verify(self, data, signature):
         """
@@ -37,6 +46,12 @@ class Verifier(Signer):
             s = base64.b64decode(signature)
             return ct_bytes_compare(h, s)
 
+        elif self.sign_algorithm == 'ed25519':
+            try:
+                self._ed25519.verify(data, base64.b64decode(signature))
+                return True
+            except BadSignatureError:
+                return False
         else:
             raise HttpSigException("Unsupported algorithm.")
 

@@ -4,6 +4,8 @@ import six
 from Crypto.Hash import HMAC
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
+from nacl.signing import SigningKey
+from nacl.encoding import Base64Encoder
 
 from .utils import *
 
@@ -15,6 +17,7 @@ class Signer(object):
     """
     When using an RSA algo, the secret is a PEM-encoded private key.
     When using an HMAC algo, the secret is the HMAC signing secret.
+    When using ed25519 algo, the secret is the base64-encoded private key
 
     Password-protected keyfiles are not supported.
     """
@@ -28,7 +31,12 @@ class Signer(object):
 
         self._rsa = None
         self._hash = None
-        self.sign_algorithm, self.hash_algorithm = algorithm.split('-')
+        self._ed25519 = None
+        splitted = algorithm.split('-')
+        if len(splitted) > 1:
+            self.sign_algorithm, self.hash_algorithm = splitted
+        else:
+            self.sign_algorithm, self.hash_algorithm = splitted[0], None
 
         if self.sign_algorithm == 'rsa':
             try:
@@ -41,7 +49,10 @@ class Signer(object):
         elif self.sign_algorithm == 'hmac':
             self._hash = HMAC.new(secret,
                                   digestmod=HASHES[self.hash_algorithm])
-
+        
+        elif self.sign_algorithm == 'ed25519':
+            self._ed25519 = SigningKey(secret, encoder=Base64Encoder)
+            
     @property
     def algorithm(self):
         return '%s-%s' % (self.sign_algorithm, self.hash_algorithm)
@@ -59,6 +70,11 @@ class Signer(object):
         hmac = self._hash.copy()
         hmac.update(data)
         return hmac.digest()
+    
+    def _sign_ed25519(self, data):
+        if isinstance(data, six.string_types):
+            data = data.encode("ascii")
+        return self._ed25519.sign(data).signature
 
     def sign(self, data):
         if isinstance(data, six.string_types):
@@ -68,6 +84,8 @@ class Signer(object):
             signed = self._sign_rsa(data)
         elif self._hash:
             signed = self._sign_hmac(data)
+        elif self._ed25519:
+            signed = self._sign_ed25519(data)
         if not signed:
             raise SystemError('No valid encryptor found.')
         return base64.b64encode(signed).decode("ascii")
