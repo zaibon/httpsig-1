@@ -3,6 +3,9 @@ import six
 import re
 import struct
 import hashlib
+import time
+from email.utils import formatdate
+from datetime import datetime
 
 try:
     # Python 3
@@ -79,6 +82,16 @@ def generate_message(required_headers, headers, host=None, method=None,
                 else:
                     raise Exception('missing required header "%s"' % h)
             signable_list.append('%s: %s' % (h, host))
+        elif h == '(created)':
+            now = int(time.time())
+            signable_list.append('%s: %s' % (h, now))
+        elif h == 'date':
+            if not headers.get(h):
+                now = datetime.now()
+                stamp = time.mktime(now.timetuple())
+                date = formatdate(timeval=stamp, localtime=False, usegmt=True)
+                headers[h] = date
+            signable_list.append('%s: %s' % (h, headers[h]))
         else:
             if h not in headers:
                 raise Exception('missing required header "%s"' % h)
